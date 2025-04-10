@@ -6,6 +6,22 @@ use App\Http\Controllers\NilaiController;
 use App\Http\Controllers\ProdukController;
 use App\Http\Controllers\PendaftaranController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\PenggunaController;
+use App\Http\Controllers\TeleponController;
+use App\Http\Controllers\KategoriController;
+use App\Http\Controllers\ProdukkController;
+use App\Http\Controllers\ObatController;
+use App\Http\Controllers\PembeliController;
+use App\Http\Controllers\TransaksiController;
+
+
+
+
+
+
+
+
+
 
 
 
@@ -87,3 +103,10 @@ Route::resource('nilai', NilaiController::class);
 Route::resource('produk', ProdukController::class);
 Route::resource('pendaftaran', PendaftaranController::class);
 Route::resource('product', ProductController::class);
+Route::resource('pengguna', PenggunaController::class);
+Route::resource('telepon', TeleponController::class);
+Route::resource('kategori', KategoriController::class);
+Route::resource('produkk', ProdukkController::class);
+Route::resource('obat', ObatController::class);
+Route::resource('pembeli', PembeliController::class);
+Route::resource('transaksi', TransaksiController::class);

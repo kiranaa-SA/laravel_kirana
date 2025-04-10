@@ -2,8 +2,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
-use Storage;
 use Illuminate\Http\Request;
+use Storage;
 
 class ProductController extends Controller
 {
@@ -21,26 +21,29 @@ class ProductController extends Controller
     public function store(Request $request)
     {
         // membuat validasi
-        $validated = $request->validate([
-            'nama_product'            => 'required',
-            'price'           => 'required|numeric',
-            'photo'           => 'required|mimes:png,jpg|max:1024',
-            'stock'           => 'required|numeric',
-            'production_date' => 'required',
-            'merk'            => 'required',
-        ]);
+        // $validated = $request->validate([
+        //     'nama_product'    => 'required',
+        //     'price'           => 'required|numeric',
+        //     'photo'           => 'required|mimes:png,jpg|max:1024',
+        //     'stock'           => 'required|numeric',
+        //     'production_date' => 'required',
+        //     'merk'            => 'required',
+        // ]);
 
         $product                  = new Product();
-        $product->nama_product     = $request->nama_product;
+        $product->nama_product    = $request->nama_product;
         $product->merk            = $request->merk;
         $product->production_date = $request->production_date;
         $product->price           = $request->price;
         $product->stock           = $request->stock;
 
         // upload gambar atau foto
-        $image = $request->file('photo');
-        $image->storeAs('public/product', $image->hashName());
-        $product->photo = $image->hashName();
+        if($request->hasFile('photo')){
+            $img = $request->file('photo');
+            $name = rand(1000,9999).$img->getClientOriginalName();
+            $img->move('storage/product', $name);
+            $product->photo = $name;
+        }
 
         $product->save();
 
@@ -61,18 +64,18 @@ class ProductController extends Controller
 
     public function update(Request $request, $id)
     {
-        // membuat validasi
-        $validated = $request->validate([
-            'nama_product'            => 'required',
-            'price'           => 'required|numeric',
-            'photo'           => 'nullable|mimes:png,jpg|max:1024',
-            'stock'           => 'required|numeric',
-            'production_date' => 'required',
-            'merk'            => 'required',
-        ]);
+        // // membuat validasi
+        // $validated = $request->validate([
+        //     'nama_product'    => 'required',
+        //     'price'           => 'required|numeric',
+        //     'photo'           => 'nullable|mimes:png,jpg|max:1024',
+        //     'stock'           => 'required|numeric',
+        //     'production_date' => 'required',
+        //     'merk'            => 'required',
+        // ]);
 
         $product                  = Product::findOrFail($id);
-        $product->nama_product          = $request->nama_product;
+        $product->nama_product    = $request->nama_product;
         $product->merk            = $request->merk;
         $product->production_date = $request->production_date;
         $product->price           = $request->price;
@@ -80,16 +83,12 @@ class ProductController extends Controller
 
         // update gambar atau foto
         if ($request->hasFile('photo')) {
-            // Hapus gambar yang lama jika ada
-            if ($product->photo && \Storage::exists('public/product/' . $product->photo)) {
-                Storage::delete('public/product/' . $product->photo);
-            }
-
-            // upload gambar atau foto baru
-            $image = $request->file('photo');
-            $image->storeAs('public/product', $image->hashName());
-            $product->photo = $image->hashName();
-        }
+        $product->deleteImage();
+        $img  = $request->file('photo');
+        $name = rand(1000, 9999) . $img->getClientOriginalName();
+        $img->move('storage/product', $name);
+        $product->photo = $name;
+}
 
         $product->save();
 

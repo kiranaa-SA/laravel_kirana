@@ -11,4 +11,10 @@ class Product extends Model
 
     protected $fillable = ['id', 'nama_product', 'photo','merk', 'price','stock','production_date'];
     public $timestamp = true;
+
+    public function deleteImage(){
+        if($this->photo && file_exists(public_path('storage/product' . $this->photo))) {
+            return unlink(public_path('storage/product' . $this->photo));
+        }
+    }
 }
